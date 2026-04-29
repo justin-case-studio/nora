@@ -1,0 +1,80 @@
+# Dependencies
+node_modules/
+venv-pywebview/
+dev_env/
+build-tools/
+
+# Build output
+dist/
+gui/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Environment & secrets
+.env
+*.env
+credentials.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+error_log.txt
+
+# Test/temp data
+test_utils/testdb/
+tmp_import/
+
+# === Safe-to-Publish additions (Phase 4, PREP-04) ===
+
+# User-specific config
+config/
+
+# SQLite databases (except OS thumbs)
+*.db
+!Thumbs.db
+
+# Generic venv directories
+venv/
+.venv/
+
+# Debug development files
+debug_*.py
+debug_*.html
+
+# Private product management documents
+pm/
+
+# GSD planning and AI agent artifacts
+.planning/
+.claude/
+.cursor/
+.obsidian/
+
+# Root-level test scripts (not part of organized test suite)
+test_cli.py
+test_migration.py
+test_progress.py
+test_frontend_integration.py
+test_unified_notarization.py
+test_qt.py
+
+# Stale dev planning doc
+Notarizer App Development Plan.md
+
+# Stale source files not for public repo
+src/minimal.py
+src/test_pyqt.py
+src/test_qt.py
+src/test_tabs.py

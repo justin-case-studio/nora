@@ -1,0 +1,271 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    # Pin to 22.04: glibc/GTK are forward-compatible only, so the AppImage
+    # must be built against the oldest supported runtime (Ubuntu 22.04 →
+    # glibc 2.35, GTK 3.24.33). Building on ubuntu-latest links the binary
+    # against glibc 2.39+ and breaks on 22.04/Debian 12/older distros.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libfuse2 \
+            libcairo2-dev \
+            libgirepository1.0-dev \
+            libgtk-3-0 \
+            libwebkit2gtk-4.0-37 \
+            gir1.2-webkit2-4.0 \
+            libsoup2.4-1 \
+            gir1.2-soup-2.4 \
+            pkg-config \
+            python3-dev \
+            xvfb
+
+      - name: Extract version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run frontend:prod
+
+      - name: Patch system libwebkit2gtk-4.0 (cross-distro helper path)
+        # Rewrites the 40-char hardcoded helper-dir path inside
+        # /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37 so that WebKit
+        # looks at a fixed /tmp path at runtime instead. Must run before
+        # PyInstaller embeds the library. See scripts/patch-libwebkit.py
+        # for full rationale.
+        run: |
+          sudo python3 scripts/patch-libwebkit.py
+          LIB="/usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37"
+          NEW_PATH="/tmp/.nora-webkit2gtk-4.0-helpers-AAAAAA"
+          OLD_PATH="/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0"
+          if ! strings -a "$LIB" | grep -qF "$NEW_PATH"; then
+            echo "ERROR: patch did not land in $LIB"; exit 1
+          fi
+          if strings -a "$LIB" | grep -qxF "$OLD_PATH"; then
+            echo "ERROR: old path still present in $LIB after patch"; exit 1
+          fi
+          echo "system libwebkit source verified patched ✓"
+
+      - name: Build Linux binary
+        run: npm run build:linux
+
+      - name: Build AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: bash build-appimage.sh "${{ env.VERSION }}"
+
+      - name: Smoke test AppImage
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: |
+          APPIMAGE="dist/Nora-${{ env.VERSION }}-x86_64.AppImage"
+          chmod +x "$APPIMAGE"
+
+          # Launch under Xvfb; pywebview runs an event loop, so a healthy app
+          # stays alive until killed. Give it 15s to fail fast on import/gi
+          # errors, then tear it down and inspect the log.
+          xvfb-run -a -s "-screen 0 1280x720x24" "$APPIMAGE" > smoke.log 2>&1 &
+          APP_PID=$!
+          sleep 15
+
+          if kill -0 "$APP_PID" 2>/dev/null; then
+            echo "App still running after 15s — startup OK."
+            # SIGTERM the xvfb-run wrapper; it propagates to the app.
+            kill "$APP_PID" 2>/dev/null || true
+            wait "$APP_PID" 2>/dev/null || true
+          else
+            echo "ERROR: App exited within 15s of launch."
+            echo "---- smoke.log ----"
+            cat smoke.log
+            exit 1
+          fi
+
+          echo "---- smoke.log ----"
+          cat smoke.log
+
+          # Even if the process survived, flag known-bad patterns.
+          if grep -E "Namespace .* not available|undefined symbol|WebViewException|ModuleNotFoundError|Traceback \(most recent call last\)" smoke.log; then
+            echo "ERROR: fatal pattern found in smoke log."
+            exit 1
+          fi
+
+      - name: Verify AppDir libwebkit has patched helper path
+        # WebKit2GTK 4.0 hardcodes its helper-dir path at compile time with no
+        # env-var override. We binary-patch the source lib before PyInstaller
+        # picks it up, replacing /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0 with
+        # /tmp/.nora-webkit2gtk-4.0-helpers-AAAAAA. The patch step above
+        # verified the system source is patched; this step verifies the patch
+        # survived linuxdeploy's bundling into the final AppImage. PyInstaller
+        # bundles from the same patched source — no separate verification
+        # needed (trying to extract /tmp/_MEI* at runtime is racy).
+        run: |
+          APPIMAGE="dist/Nora-${{ env.VERSION }}-x86_64.AppImage"
+          OLD_PATH="/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0"
+          NEW_PATH="/tmp/.nora-webkit2gtk-4.0-helpers-AAAAAA"
+
+          mkdir -p verify-extract && cd verify-extract
+          "../$APPIMAGE" --appimage-extract >/dev/null
+
+          LIB="squashfs-root/usr/lib/libwebkit2gtk-4.0.so.37"
+          if ! strings -a "$LIB" | grep -qF "$NEW_PATH"; then
+            echo "ERROR: AppDir libwebkit missing patched path '$NEW_PATH'"
+            strings -a "$LIB" | grep -F "webkit2gtk-4.0" || true
+            exit 1
+          fi
+          if strings -a "$LIB" | grep -qxF "$OLD_PATH"; then
+            echo "ERROR: AppDir libwebkit still contains unpatched '$OLD_PATH'"
+            exit 1
+          fi
+          echo "AppDir libwebkit patched to $NEW_PATH ✓"
+
+      - name: Rename artifact
+        run: |
+          mv "dist/Nora-${{ env.VERSION }}-x86_64.AppImage" \
+             "dist/Nora-${{ env.VERSION }}-linux-x86_64.AppImage"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux-appimage
+          path: dist/Nora-${{ env.VERSION }}-linux-x86_64.AppImage
+          retention-days: 1
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Extract version
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run frontend:prod
+
+      - name: Build Windows EXE
+        run: npm run build:windows
+
+      - name: Rename artifact
+        shell: pwsh
+        run: |
+          Move-Item "dist\nora.exe" "dist\Nora-${{ env.VERSION }}-windows-x64.exe"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows-exe
+          path: dist/Nora-${{ env.VERSION }}-windows-x64.exe
+          retention-days: 1
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Extract version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run frontend:prod
+
+      - name: Build macOS app bundle
+        run: npm run build:macos
+
+      - name: Create DMG
+        run: |
+          hdiutil create \
+            -volname "Nora" \
+            -srcfolder dist/Nora.app \
+            -ov \
+            -format UDZO \
+            "dist/Nora-${{ env.VERSION }}-macos-x64.dmg"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos-dmg
+          path: dist/Nora-${{ env.VERSION }}-macos-x64.dmg
+          retention-days: 1
+
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Extract version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+          path: release-artifacts/
+
+      - name: Generate SHA256 checksums
+        run: |
+          cd release-artifacts/
+          sha256sum * > SHA256SUMS
+
+      - name: Create GitHub Release and upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Nora v${{ env.VERSION }}
+          generate_release_notes: true
+          files: |
+            release-artifacts/Nora-${{ env.VERSION }}-linux-x86_64.AppImage
+            release-artifacts/Nora-${{ env.VERSION }}-windows-x64.exe
+            release-artifacts/Nora-${{ env.VERSION }}-macos-x64.dmg
+            release-artifacts/SHA256SUMS

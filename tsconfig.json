@@ -1,0 +1,16 @@
+{  
+    "compilerOptions": {    
+        "lib": ["dom", "dom.iterable", "esnext"],    
+        "target": "ESNext",    
+        "types": ["vite/client"],
+        "isolatedModules": true,
+        "moduleResolution": "Node",
+        "jsx": "react-jsx",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "module": "ESNext",
+        "typeRoots": ["./node_modules/@types", "./src/frontend/types"]
+    },
+    "include": ["src/**/*", "types/**/*"]
+ }

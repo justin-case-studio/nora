@@ -1,0 +1,10 @@
+# .gitleaksignore
+# False positive suppressions for gitleaks working-tree scans.
+#
+# Both suppressed findings are in build/dist artifacts (already excluded from git
+# by .gitignore). The flagged "secret" is a GNOME schema XML enum value name
+# "cjk-utf8-ambiguous-width" from a Tilix terminal emulator gschema file bundled
+# by PyInstaller — not a credential.
+
+/home/poduser/Projects/Notarizer/build/build-linux/_pyi_gschema_compilation/com.gexperts.Tilix.gschema.xml:generic-api-key:743
+/home/poduser/Projects/Notarizer/dist/nora.AppDir/usr/share/glib-2.0/schemas/com.gexperts.Tilix.gschema.xml:generic-api-key:743

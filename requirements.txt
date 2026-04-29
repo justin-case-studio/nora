@@ -1,0 +1,35 @@
+# Direct runtime dependencies, pinned to exact versions for reproducible
+# PyInstaller builds. Upgrades should be deliberate — bump a pin, rebuild,
+# test, commit. Transitive dependencies are not locked here; if full
+# supply-chain reproducibility becomes a need, switch to pip-tools or uv and
+# commit a compiled lockfile.
+
+setuptools
+
+# Desktop webview wrapper.
+# NOTE: do not bump past 6.x without re-testing the Verify drag-and-drop
+# path on WebKit2GTK — pywebview 6.x intercepts drag-data-received at the
+# GTK level which breaks the HTML drop event's FileList on some WebKit
+# versions. See commit history around 0.9 for context.
+pywebview==6.1
+
+# GTK bindings for the WebKit2 backend on Linux.
+# NOTE: must stay <3.52 — 3.52+ requires girepository-2.0 (glib 2.80+),
+# which is unavailable on Ubuntu 22.04.
+# pycairo is a PyGObject build-time requirement; pip must see it pinned
+# before PyGObject, otherwise PyGObject will try to pull the latest pycairo.
+pycairo==1.29.0; sys_platform == 'linux'
+PyGObject==3.50.2; sys_platform == 'linux'
+
+# Build tool — bundled into the release pipeline.
+pyinstaller==6.19.0
+
+# Blockchain integration (Windows only — no Linux/macOS counterpart needed).
+pythonnet==3.0.3; sys_platform == 'win32'
+
+requests==2.33.1
+python-dotenv==1.2.2
+
+# NOTE: must stay on 2.x — 3.x ships mypyc extensions that PyInstaller
+# cannot bundle (dynamic import by hash).
+charset_normalizer==2.1.1

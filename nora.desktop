@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Nora
+GenericName=File Registration
+Comment=Blockchain-based file registration on Bitcoin SV
+Exec=nora
+Icon=nora
+Type=Application
+Categories=Utility;Office;
+Keywords=register;blockchain;hash;integrity;
+StartupNotify=true
+StartupWMClass=Nora

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcairo2-dev \
+            libgirepository1.0-dev \
+            pkg-config \
+            python3-dev
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt ruff pytest
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Ruff lint
+        run: ruff check src/
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        run: pytest tests/ -v

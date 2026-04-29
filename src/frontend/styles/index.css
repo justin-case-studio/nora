@@ -1,0 +1,88 @@
+/* Base styles for the Nora application */
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f8fa;
+  color: #333;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Utility classes */
+.full-height {
+  height: 100vh;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Transitions */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+/* Subtle pulse animation for first launch */
+@keyframes subtle-pulse {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); 
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); 
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); 
+  }
+}
+
+.subtle-pulse {
+  animation: subtle-pulse 2s infinite;
+}
+
+/* Ensure button animation doesn't affect layout */
+.subtle-pulse {
+  position: relative;
+} 
