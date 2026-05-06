@@ -65,20 +65,37 @@ generate_icns() {
 
   echo "  Generating logo.icns via sips + iconutil..."
 
+  # Use a portable and reliable temp directory on macOS
   local ICONSET
-  ICONSET="$(mktemp -d -t nora-iconset.XXXXXX)"
+  ICONSET="$(mktemp -d "${TMPDIR:-/tmp}/nora-iconset.XXXXXX")"
+  if [[ -z "$ICONSET" || ! -d "$ICONSET" ]]; then
+    echo "ERROR: Failed to create temporary iconset directory."
+    exit 1
+  fi
 
   # Standard sizes for a complete .iconset (including @2x retina variants)
   local sizes=(16 32 64 128 256 512 1024)
   for sz in "${sizes[@]}"; do
-    sips -z "$sz" "$sz" "$PNG" --out "$ICONSET/icon_${sz}x${sz}.png" >/dev/null 2>&1
+    if ! sips -z "$sz" "$sz" "$PNG" --out "$ICONSET/icon_${sz}x${sz}.png" 2>&1; then
+      echo "ERROR: sips failed to resize ${sz}x${sz}"
+      rm -rf "$ICONSET"
+      exit 1
+    fi
     if (( sz <= 512 )); then
       local sz2=$((sz * 2))
-      sips -z "$sz2" "$sz2" "$PNG" --out "$ICONSET/icon_${sz}x${sz}@2x.png" >/dev/null 2>&1
+      if ! sips -z "$sz2" "$sz2" "$PNG" --out "$ICONSET/icon_${sz}x${sz}@2x.png" 2>&1; then
+        echo "ERROR: sips failed to resize ${sz2}x${sz2} (@2x)"
+        rm -rf "$ICONSET"
+        exit 1
+      fi
     fi
   done
 
-  iconutil -c icns -o "$ICNS" "$ICONSET" >/dev/null 2>&1
+  if ! iconutil -c icns -o "$ICNS" "$ICONSET" 2>&1; then
+    echo "ERROR: iconutil failed to create $ICNS from $ICONSET"
+    rm -rf "$ICONSET"
+    exit 1
+  fi
   rm -rf "$ICONSET"
 
   echo "  ✓ Updated $ICNS"
