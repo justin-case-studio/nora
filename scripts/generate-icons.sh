@@ -65,11 +65,19 @@ generate_icns() {
 
   echo "  Generating logo.icns via sips + iconutil..."
 
-  # Use a portable and reliable temp directory on macOS
-  local ICONSET
-  ICONSET="$(mktemp -d "${TMPDIR:-/tmp}/nora-iconset.XXXXXX")"
-  if [[ -z "$ICONSET" || ! -d "$ICONSET" ]]; then
+  # iconutil REQUIRES the directory to end with ".iconset"
+  # mktemp on macOS does not allow a literal ".iconset" in the template easily,
+  # so create a temp dir then rename it to have the required suffix.
+  local ICONSET_DIR
+  ICONSET_DIR="$(mktemp -d "${TMPDIR:-/tmp}/nora.XXXXXX")"
+  if [[ -z "$ICONSET_DIR" || ! -d "$ICONSET_DIR" ]]; then
     echo "ERROR: Failed to create temporary iconset directory."
+    exit 1
+  fi
+  local ICONSET="${ICONSET_DIR}.iconset"
+  mv "$ICONSET_DIR" "$ICONSET"
+  if [[ ! -d "$ICONSET" ]]; then
+    echo "ERROR: Failed to rename iconset directory to .iconset suffix."
     exit 1
   fi
 
