@@ -9,7 +9,7 @@ import {
   useColorMode,
   useToast
 } from '@chakra-ui/react';
-import logo from '../../assets/logo.png';
+import logo from '../../../assets/logo.png';
 import OnboardingModal from '../Modals/OnboardingModal';
 
 interface HeaderProps {

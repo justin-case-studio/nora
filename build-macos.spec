@@ -64,6 +64,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='Nora.app',
+    # icon regenerated automatically via `npm run icons` (scripts/generate-icons.sh) from src/assets/logo.png (the SOT)
     icon='src/assets/logo.icns',
     bundle_identifier='io.nora.app',
     version='1.1.0',

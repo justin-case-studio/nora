@@ -7,7 +7,7 @@ ARCH="x86_64"
 APPDIR="$SCRIPT_DIR/dist/nora.AppDir"
 OUTPUT_PATH="$SCRIPT_DIR/dist/Nora-${VERSION}-${ARCH}.AppImage"
 BINARY="$SCRIPT_DIR/dist/nora"
-ICON="$SCRIPT_DIR/src/assets/nora.png"
+ICON="$SCRIPT_DIR/src/assets/logo.png"
 DESKTOP_FILE="$SCRIPT_DIR/nora.desktop"
 
 # Verify prerequisites

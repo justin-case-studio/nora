@@ -34,6 +34,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           upx_exclude=[],
+          # icon regenerated automatically via `npm run icons` (scripts/generate-icons.sh) from src/assets/logo.png (the SOT)
           icon='.\\src\\assets\\logo.ico',
           runtime_tmpdir=None,
           console=False,
