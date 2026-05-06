@@ -176,6 +176,10 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Install ImageMagick (for automatic logo.ico generation)
+        run: choco install imagemagick --no-progress -y
+        shell: pwsh
+
       - name: Build frontend
         run: npm run frontend:prod
 

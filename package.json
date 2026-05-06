@@ -7,7 +7,7 @@
     "build": "npm run clean && npm run frontend:prod && run-script-os",
     "icons": "run-script-os",
     "icons:default": "bash scripts/generate-icons.sh",
-    "icons:windows": "bash scripts/generate-icons.sh 2>NUL || echo 'Tip: icons refreshed automatically on macOS/Linux. On Windows run via Git Bash/WSL or update logo.ico manually from logo.png.'",
+    "icons:windows": "bash scripts/generate-icons.sh",
     "build:macos": "npm run icons && pyinstaller build-macos.spec",
     "build:windows": "npm run icons && pyinstaller build-windows.spec",
     "build:linux": "npm run icons && pyinstaller build-linux.spec",
