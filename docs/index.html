@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nora — Permanent proof your files existed</title>
+  <meta name="description" content="Nora is a desktop app that registers your files on the Bitcoin blockchain. Permanent, tamper-proof proof a file existed in exactly that form." />
+  <link rel="icon" href="assets/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============== TOP BAR ============== -->
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="#top">
+        <span class="brand-mark"><img src="assets/logo.png" alt="" /></span>
+        <span class="brand-name">Nora</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#how-steps">How it works</a>
+        <a href="#who">Who it's for</a>
+        <a href="#features">Features</a>
+        <a href="https://github.com/justin-case-studio/nora/releases">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============== HERO ============== -->
+  <section class="hero" id="top" data-screen-label="01 Hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="kicker">DESKTOP APP · OPEN SOURCE · FREE</span>
+        <h1>
+          Permanent
+          <br />
+          proof your
+          <br />
+          files <span class="pop">existed.</span>
+        </h1>
+        <p class="hero-sub">
+          Point Nora at the folders you care about. On every run it fingerprints any new or modified file
+          and registers that fingerprint on the Bitcoin blockchain — a tamper-proof record of when the file
+          existed, in exactly that form.
+        </p>
+        <div class="hero-cta">
+          <a class="btn" href="https://github.com/justin-case-studio/nora/releases">
+            Download Nora <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn--ghost" href="#how-steps">See how it works</a>
+        </div>
+        <div class="platforms">
+          <span>Linux · Windows · macOS · Free forever</span>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="medallion">
+          <img src="assets/logo.png" alt="Nora — pop art portrait" />
+          <div class="burst"><span>PROOF!<br/>Forever.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== EXPLAINER / TOGGLES ============== -->
+  <section id="how" data-screen-label="02 What it does">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What does Nora<br/>actually do?</h2>
+        <span class="eyebrow">The short version</span>
+      </div>
+
+      <div class="toggles">
+
+        <details class="toggle" id="explainer" open>
+          <summary>
+            <span>START HERE  </span>
+            <span class="plus" aria-hidden="true">+</span>
+          </summary>
+          <div class="body">
+            <p>
+              You never know which files will matter later. A contract, a draft, a photo,
+              a spreadsheet — most likely you'll never need to prove anything about them.
+              But for the few you do, having a tamper-proof record of when the file existed,
+              in exactly that form, can be the difference between a clean resolution and
+              an expensive one.
+            </p>
+            <p>
+              Nora is a desktop application that creates those records. It monitors a folder
+              you choose, fingerprints each file with a SHA-256 hash, and permanently registers
+              that fingerprint on the Bitcoin SV blockchain. The proof is yours forever,
+              independent of Nora or any third party.
+            </p>
+          </div>
+        </details>
+
+        <details class="toggle" id="how-steps">
+          <summary>
+            <span>How it works, step by step</span>
+            <span class="plus" aria-hidden="true">+</span>
+          </summary>
+          <div class="body">
+            <ol class="steps">
+              <li>
+                <div>
+                  <b>Point Nora at your folders</b>
+                  Choose the directories you want to watch — work files, contracts, drafts, whatever matters.
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Start a registration run</b>
+                  Nora reads every file in the watched directories — top to bottom.
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>New or modified?</b>
+                  Each file is checked against Nora's local database. Unchanged files are skipped; only new or modified ones move forward.
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Fingerprint</b>
+                  Nora computes a SHA-256 hash of the file — a unique digital fingerprint, generated entirely on your machine.
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Register &amp; store</b>
+                  Nora registers the fingerprint on the Bitcoin blockchain — permanent, anchored to the moment of registration — and saves it to the local database for future runs.
+                </div>
+              </li>
+              <li>
+                <div>
+                  <b>Verify, anytime</b>
+                  Open any registered file in Nora's Verify panel — even years later — to confirm it still matches its blockchain record.
+                </div>
+              </li>
+            </ol>
+          </div>
+        </details>
+
+        <details class="toggle" id="who">
+          <summary>
+            <span>Who is it for?</span>
+            <span class="plus" aria-hidden="true">+</span>
+          </summary>
+          <div class="body">
+            <div class="personas">
+              <div class="persona">
+                <span class="tag">ARTISTS</span>
+                <h4>Prove when you made it</h4>
+                <p>Register originals, compositions, and recordings — version by version — before a dispute or a pitch.</p>
+              </div>
+              <div class="persona">
+                <span class="tag">Legal professionals</span>
+                <h4>Lock in a file's exact state</h4>
+                <p>Anchor case exhibits and client files to a verifiable point in time. If a document's authenticity is later questioned, the blockchain record settles whether it has been altered since registration.</p>
+              </div>
+              <div class="persona">
+                <span class="tag">Anyone, really</span>
+                <h4>Important documents</h4>
+                <p>Contracts, proposals, applications, communications — if it matters, register it.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== FEATURES ============== -->
+  <section class="features-section" id="features" data-screen-label="03 Features">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Built to disappear<br/>into your workflow.</h2>
+        <span class="eyebrow">Features</span>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <span class="badge">Automatic</span>
+          <h3>Folder watching</h3>
+          <p>Set a folder and walk away. Nora registers every new or modified file.</p>
+        </div>
+        <div class="feature">
+          <span class="badge">Permanent</span>
+          <h3>Tamper-proof record</h3>
+          <p>SHA-256 fingerprints registered on the Bitcoin blockchain cannot be altered or deleted. Ever.</p>
+        </div>
+        <div class="feature">
+          <span class="badge">Private</span>
+          <h3>Files stay local</h3>
+          <p>Your files never leave your computer. Only a cryptographic fingerprint is sent to the blockchain.</p>
+        </div>
+        <div class="feature">
+          <span class="badge">Verifiable</span>
+          <h3>Check any time</h3>
+          <p>Anyone can verify a file's registration using just the file and the blockchain record — Nora optional.</p>
+        </div>
+        <div class="feature">
+          <span class="badge">Trial mode</span>
+          <h3>Try without an account</h3>
+          <p>Local simulation mode lets you evaluate the whole workflow before signing up for anything.</p>
+        </div>
+        <div class="feature">
+          <span class="badge">At a glance</span>
+          <h3>Dashboard &amp; CSV export</h3>
+          <p>Registration statistics, daily activity chart, searchable file database, and full CSV export.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== DOWNLOAD CTA STRIP ============== -->
+  <section class="cta-strip" data-screen-label="04 Download CTA">
+    <div class="wrap">
+      <div>
+        <h2>REGISTER YOUR FIRST
+FILE IN A MINUTE.</h2>
+        <p>Free. Open source. Linux, Windows, and macOS.</p>
+        <p class="cta-aside">
+          Questions or running into setup snags?
+          <a href="https://t.me/nora_file_registry">Join the Telegram group <span aria-hidden="true">→</span></a>
+        </p>
+      </div>
+      <a class="btn btn--blue" href="https://github.com/justin-case-studio/nora/releases">
+        Get the latest release <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============== FOOTER ============== -->
+  <footer data-screen-label="05 Footer">
+    <div class="wrap">
+      <div class="brand">
+        <span class="brand-mark"><img src="assets/logo.png" alt="" /></span>
+        <span class="brand-name">Nora</span>
+      </div>
+      <div class="foot-links">
+        <a href="https://github.com/justin-case-studio/nora">GitHub</a>
+        <a href="https://github.com/justin-case-studio/nora/releases">Releases</a>
+        <a href="https://github.com/justin-case-studio/nora/blob/main/README.md">README</a>
+        <a href="https://t.me/nora_file_registry">Telegram</a>
+        <a href="https://github.com/justin-case-studio/nora/blob/main/LICENSE">License</a>
+      </div>
+      <div class="legal">© Nora. MIT licensed. Made for permanent proof.</div>
+    </div>
+  </footer>
+
+  <!-- Open the target <details> when an in-page anchor is clicked or the page loads with a hash. -->
+  <script>
+    (function () {
+      function openHashTarget() {
+        var id = location.hash.slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (!el) return;
+        var details = el.closest ? el.closest('details') : null;
+        if (details) details.open = true;
+      }
+      window.addEventListener('hashchange', openHashTarget);
+      window.addEventListener('DOMContentLoaded', openHashTarget);
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="#"]');
+        if (!a) return;
+        var id = a.getAttribute('href').slice(1);
+        if (!id) return;
+        var el = document.getElementById(id);
+        if (!el) return;
+        var details = el.closest('details');
+        if (details) details.open = true;
+      });
+    })();
+  </script>
+
+</body>
+</html>
